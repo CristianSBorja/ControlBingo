@@ -7,6 +7,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -30,12 +31,19 @@
     </div>
   </div>
 
-  <div class="numeros-cantados-seccion">
-    <h2>Números Cantados</h2>
-    <div id="numerosCantadosContenedor">
-      <p class="placeholder-text">Aún no se han cantado números.</p>
+  <div class="game-status-section">
+    <div class="last-number-display">
+        <h3>Último Número Cantado</h3>
+        <div id="ultimoNumero" class="numero-grande">--</div>
+    </div>
+    <div class="numeros-cantados-seccion">
+        <h2>Números Cantados</h2>
+        <div id="numerosCantadosContenedor">
+            <p class="placeholder-text">Aún no se han cantado números.</p>
+        </div>
     </div>
   </div>
+
 
   <h2>Cartones</h2>
   <div id="cartones"></div>
@@ -56,6 +64,13 @@
       document.getElementById('cartonInput').value = '';
     }
 
+    function eliminarCarton(idx) {
+        if (confirm('¿Estás seguro de que quieres eliminar este cartón?')) {
+            cartones.splice(idx, 1);
+            renderCartones();
+        }
+    }
+
     function cantarNumero() {
       const num = parseInt(document.getElementById('numeroCantado').value);
       const inputEl = document.getElementById('numeroCantado');
@@ -71,12 +86,21 @@
       renderCartones();
       inputEl.value = '';
       inputEl.focus();
+
+      // Actualizar el display del último número
+      const ultimoNumeroEl = document.getElementById('ultimoNumero');
+      ultimoNumeroEl.textContent = num;
+      ultimoNumeroEl.classList.add('pop-in');
+      setTimeout(() => {
+        ultimoNumeroEl.classList.remove('pop-in');
+      }, 300);
     }
 
     function limpiarJuego() {
       numerosCantados = [];
       renderNumerosCantados();
       renderCartones();
+      document.getElementById('ultimoNumero').textContent = '--';
     }
 
     function renderNumerosCantados() {
@@ -106,6 +130,14 @@
         let cartonDiv = document.createElement('div');
         cartonDiv.className = 'carton';
 
+        // Botón para eliminar el cartón
+        let removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-carton-btn';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.title = 'Eliminar cartón';
+        removeBtn.onclick = () => eliminarCarton(idx);
+        cartonDiv.appendChild(removeBtn);
+
         let bingo = true;
         let lineaCompleta = false;
 
@@ -133,17 +165,19 @@
 
         if (bingo) {
           cartonDiv.classList.add('ganador');
-          cartonDiv.insertAdjacentHTML('beforeend', '<p><b>🎉 ¡BINGO!</b></p>');
+          cartonDiv.insertAdjacentHTML('beforeend', '<p class="mensaje-ganador"><b>🎉 ¡BINGO!</b></p>');
+          // ¡Lanzar confeti!
+          confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
         } else if (lineaCompleta) {
           cartonDiv.classList.add('ganador');
-          cartonDiv.insertAdjacentHTML('beforeend', '<p><b>✔️ ¡Línea!</b></p>');
+          cartonDiv.insertAdjacentHTML('beforeend', '<p class="mensaje-ganador"><b>✔️ ¡Línea!</b></p>');
         }
 
         contenedor.appendChild(cartonDiv);
       });
     }
 
-    // Ev lista para cantar número con la tecla Enter
+    // Event listener para cantar número con la tecla Enter
     document.getElementById('numeroCantado').addEventListener('keyup', function(event) {
         if (event.key === 'Enter') {
             cantarNumero();
