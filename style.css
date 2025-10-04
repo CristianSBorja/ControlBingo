@@ -1,18 +1,21 @@
 :root {
-    --primary-color: #3f51b5; /* Indigo */
-    --primary-dark: #303f9f;
-    --accent-color: #ff9800; /* Orange */
-    --accent-dark: #f57c00;
-    --winner-color: #4caf50; /* Green */
-    --winner-light: #e8f5e9;
-    --text-color: #333;
-    --bg-color: #f0f2f5;
-    --card-bg: #ffffff;
+    /* Tema Oscuro */
+    --primary-color: #5c6bc0; /* Indigo más claro */
+    --primary-dark: #3f51b5;
+    --accent-color: #ffa726; /* Naranja más claro */
+    --accent-dark: #fb8c00;
+    --winner-color: #66bb6a; /* Verde más claro */
+    --winner-light: rgba(102, 187, 106, 0.15);
+    --text-color: #e0e0e0; /* Texto claro */
+    --bg-color: #121212; /* Fondo principal oscuro */
+    --card-bg: #1e1e1e; /* Fondo de tarjetas oscuro */
+    --border-color: #424242;
   }
   
   body {
     font-family: 'Poppins', sans-serif;
-    background-color: var(--bg-color);
+    background-image: url("fondo-gamer.jpeg");
+    background-size: 300px;
     color: var(--text-color);
     display: flex;
     justify-content: center;
@@ -34,7 +37,7 @@
   }
   
   h1, h2, h3 {
-    color: var(--primary-dark);
+    color: var(--text-color);
   }
   
   h1 {
@@ -49,7 +52,7 @@
     gap: 20px;
     margin-bottom: 30px;
     padding-bottom: 20px;
-    border-bottom: 2px solid #eee;
+    border-bottom: 2px solid var(--border-color);
   }
   
   .control-group {
@@ -60,7 +63,9 @@
   
   textarea, input[type="number"] {
     padding: 10px;
-    border: 2px solid #ccc;
+    border: 2px solid var(--border-color);
+    background-color: #252525;
+    color: var(--text-color);
     border-radius: 8px;
     font-family: 'Courier New', Courier, monospace;
     font-size: 1rem;
@@ -80,7 +85,7 @@
   
   textarea:focus, input[type="number"]:focus {
     outline: none;
-    border-color: var(--primary-color);
+    border-color: var(--accent-color);
     box-shadow: 0 0 8px rgba(63, 81, 181, 0.3);
   }
   
@@ -121,8 +126,8 @@
   .carton {
     position: relative;
     display: inline-block;
-    padding: 15px;
-    border: 1px solid #ddd;
+    padding: 20px;
+    border: 1px solid var(--border-color);
     border-radius: 10px;
     background-color: #fafafa;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
@@ -173,11 +178,12 @@
     align-items: center;
     width: 40px;
     height: 40px;
-    border: 1px solid #e0e0e0;
+    border: 1px solid #444;
     margin: 3px;
     border-radius: 50%;
     font-size: 1.1rem;
     font-weight: 600;
+  color: #333; /* Color oscuro para los números para que se vean bien */
     transition: background-color 0.4s, color 0.4s, transform 0.2s;
   }
   
@@ -241,7 +247,7 @@
   }
   
   #numerosCantadosContenedor {
-      background-color: #e9ecef;
+      background-color: rgba(0, 0, 0, 0.2);
       padding: 20px;
       border-radius: 8px;
       min-height: 60px;
@@ -267,7 +273,7 @@
   }
   
   .placeholder-text {
-      color: #6c757d;
+      color: #9e9e9e;
       font-style: italic;
   }
   
@@ -304,7 +310,7 @@
 .modal-content {
   background-color: var(--card-bg);
   margin: 5% auto;
-  padding: 20px 40px;
+  padding: 30px 40px;
   border: 1px solid #ddd;
   width: 90%;
   max-width: 450px;
