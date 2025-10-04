@@ -7,7 +7,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 <body>
 <div class="container">
@@ -48,11 +47,22 @@
   <h2>Cartones</h2>
   <div id="cartones"></div>
 
+  <!-- Modal de Bingo -->
+  <div id="bingoModal" class="modal">
+    <div class="modal-content">
+      <span class="close-button" onclick="cerrarModal()">&times;</span>
+      <h2>🎉 ¡BINGO! 🎉</h2>
+      <p>El siguiente cartón ha completado el juego:</p>
+      <div id="cartonGanador"></div>
+    </div>
+  </div>
+
 </div>
 
   <script>
     let cartones = [];
     let numerosCantados = [];
+    let juegoTerminado = false;
 
     function agregarCarton() {
       const input = document.getElementById('cartonInput').value.trim();
@@ -98,10 +108,12 @@
 
     function limpiarJuego() {
       numerosCantados = [];
+      juegoTerminado = false;
       renderNumerosCantados();
       renderCartones();
       document.getElementById('ultimoNumero').textContent = '--';
     }
+
 
     function renderNumerosCantados() {
       const contenedor = document.getElementById('numerosCantadosContenedor');
@@ -165,9 +177,11 @@
 
         if (bingo) {
           cartonDiv.classList.add('ganador');
-          cartonDiv.insertAdjacentHTML('beforeend', '<p class="mensaje-ganador"><b>🎉 ¡BINGO!</b></p>');
-          // ¡Lanzar confeti!
-          confetti({ particleCount: 150, spread: 90, origin: { y: 0.6 } });
+          cartonDiv.insertAdjacentHTML('beforeend', '<p class="mensaje-ganador"><b>🎉 ¡BINGO!</b></p>');          
+          if (!juegoTerminado) {
+            mostrarModalBingo(cartonDiv.cloneNode(true));
+            juegoTerminado = true;
+          }
         } else if (lineaCompleta) {
           cartonDiv.classList.add('ganador');
           cartonDiv.insertAdjacentHTML('beforeend', '<p class="mensaje-ganador"><b>✔️ ¡Línea!</b></p>');
@@ -175,6 +189,27 @@
 
         contenedor.appendChild(cartonDiv);
       });
+    }
+
+    function mostrarModalBingo(cartonGanadorDiv) {
+      const modal = document.getElementById('bingoModal');
+      const contenidoCarton = document.getElementById('cartonGanador');
+      
+      contenidoCarton.innerHTML = ''; // Limpiar contenido anterior
+      cartonGanadorDiv.classList.remove('ganador'); // Quitar la clase para no tener doble estilo de pulso
+      contenidoCarton.appendChild(cartonGanadorDiv);
+      modal.style.display = "block";
+    }
+
+    function cerrarModal() {
+      document.getElementById('bingoModal').style.display = "none";
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('bingoModal');
+      if (event.target == modal) {
+        cerrarModal();
+      }
     }
 
     // Event listener para cantar número con la tecla Enter
