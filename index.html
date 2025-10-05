@@ -25,8 +25,10 @@
     <div class="control-group">
       <h3>Juego</h3>
       <input type="number" id="numeroCantado" placeholder="Ej: 42">
-      <button onclick="cantarNumero()">Cantar Número</button>
-      <button onclick="limpiarJuego()" class="secondary-button">Nuevo Juego</button>
+      <div class="juego-botones">
+        <button onclick="cantarNumero()" id="btnCantar">Cantar Número</button>
+        <button onclick="limpiarJuego()" class="secondary-button">Nuevo Juego</button>
+      </div>
     </div>
   </div>
 
@@ -36,7 +38,9 @@
         <div id="ultimoNumero" class="numero-grande">--</div>
     </div>
     <div class="numeros-cantados-seccion">
-        <h2>Números Cantados</h2>
+        <div class="numeros-cantados-header">
+          <h2>Números Cantados (<span id="cantidadNumeros">0</span>)</h2>
+        </div>
         <div id="numerosCantadosContenedor">
             <p class="placeholder-text">Aún no se han cantado números.</p>
         </div>
@@ -114,6 +118,12 @@
       document.getElementById('ultimoNumero').textContent = '--';
     }
 
+    function eliminarNumeroCantado(numAEliminar) {
+        numerosCantados = numerosCantados.filter(n => n !== numAEliminar);
+        renderNumerosCantados();
+        renderCartones();
+    }
+
 
     function renderNumerosCantados() {
       const contenedor = document.getElementById('numerosCantadosContenedor');
@@ -121,6 +131,7 @@
 
       const numerosOrdenados = [...numerosCantados].sort((a, b) => a - b);
 
+      document.getElementById('cantidadNumeros').textContent = numerosOrdenados.length;
       if (numerosOrdenados.length === 0) {
         contenedor.innerHTML = '<p class="placeholder-text">Aún no se han cantado números.</p>';
         return;
@@ -130,6 +141,13 @@
         const numDiv = document.createElement('div');
         numDiv.className = 'numero-cantado-item';
         numDiv.textContent = num;
+
+        let removeBtn = document.createElement('button');
+        removeBtn.className = 'remove-numero-btn';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.title = `Eliminar ${num}`;
+        removeBtn.onclick = () => eliminarNumeroCantado(num);
+        numDiv.appendChild(removeBtn);
         contenedor.appendChild(numDiv);
       });
     }
@@ -142,6 +160,13 @@
         let cartonDiv = document.createElement('div');
         cartonDiv.className = 'carton';
 
+        // Botón para editar el cartón
+        let editBtn = document.createElement('button');
+        editBtn.className = 'edit-carton-btn';
+        editBtn.innerHTML = '✏️';
+        editBtn.title = 'Editar cartón';
+        editBtn.onclick = () => mostrarEditorCarton(idx);
+        cartonDiv.appendChild(editBtn);
         // Botón para eliminar el cartón
         let removeBtn = document.createElement('button');
         removeBtn.className = 'remove-carton-btn';
@@ -189,6 +214,30 @@
 
         contenedor.appendChild(cartonDiv);
       });
+    }
+
+    function mostrarEditorCarton(idx) {
+        const cartonDiv = document.querySelectorAll('.carton')[idx];
+        const cartonData = cartones[idx];
+
+        const cartonString = cartonData.map(fila => fila.join(' ')).join('\n');
+
+        cartonDiv.innerHTML = `
+            <textarea class="editor-carton">${cartonString}</textarea>
+            <div class="editor-botones">
+                <button onclick="guardarEdicion(${idx})">Guardar</button>
+                <button onclick="renderCartones()" class="secondary-button">Cancelar</button>
+            </div>
+        `;
+        cartonDiv.classList.add('editando');
+    }
+
+    function guardarEdicion(idx) {
+        const cartonDiv = document.querySelector('.carton.editando');
+        const textarea = cartonDiv.querySelector('.editor-carton');
+        const filas = textarea.value.trim().split("\n").map(linea => linea.trim().split(/\s+/).map(Number));
+        cartones[idx] = filas;
+        renderCartones();
     }
 
     function mostrarModalBingo(cartonGanadorDiv) {
